@@ -1,4 +1,4 @@
-color = "#fff";
+bgcolor = "#000";
 
 $(document).ready(function() {
 
@@ -6,7 +6,8 @@ $(document).ready(function() {
 
 	// Change background color of div when mouseenters a .tile of #grid
 	$('#grid').on('mouseenter', '.tile', function() {
-		changeColor($(this), color);
+		randomBGColor();
+		changeColor($(this), bgcolor);
 	});
 
 	// Empties all .tile from #grid and recreates
@@ -21,30 +22,35 @@ $(document).ready(function() {
 
 });
 
-
-
-
-// Create default grid 
+// Determines number of tiles, creates grid, and resizes tiles to fit 960px
 function createGrid() {
 
-	var numTiles = +prompt('How many tiles per row? Enter a number between 0 and 64:');
+	var numTiles = prompt('How many tiles per row? Enter a number between 0 and 64:', '');
+
+	// If user submits empty string or cancels prompt, size 16x16 grid
+	if (numTiles === null || numTiles === "") {
+		numTiles = 16;
+	}
 
 	// Calculate square size
 	var tileSize = (960 / numTiles) +"px";
 
+	var grid = $('#grid');
+	var gridParent = grid.parent();
+	var newTile = '<div class="tile"></div>';
 
-	// Constructs grid by row (# for testing)
-	for(var x = 1; x <= numTiles; x++) {
+	grid.detach();
+
+	// Builds grid by row (# for testing)
+	for (var x = 1; x <= numTiles; x++) {
 		
-		for(var i = 1; i <= numTiles; i++) {
+		for (var i = 1; i <= numTiles; i++) {
 
-			$('#grid').append(
+			grid.append(newTile);
 
-				$('<div class="tile">'+x+'</div>')
-				)
 			}
 	}
-
+	gridParent.append(grid);
 
 	// Set .tile size
 	$('.tile').css({'height': tileSize, 'width': tileSize});
@@ -59,10 +65,21 @@ function emptyGrid() {
 
 
 // Change color of DOM object, input must be string
-function changeColor(obj, color){
-	obj.css('background-color', color);
+function changeColor(obj, bgcolor){
+	var currOpacity = +obj.css('opacity');
+	var newOpacity = currOpacity + 0.1;
+
+	obj.css('background-color', bgcolor);
+	obj.css('opacity', newOpacity);
 }
 
+// Changes bgcolor to random color
+function randomBGColor() {
+	var r = Math.round(Math.random() * 255);
+	var g = Math.round(Math.random() * 255);
+	var b = Math.round(Math.random() * 255);
+	bgcolor = 'rgb('+r+','+g+','+b+')';
+}
 
 
 // Set tile to hidden
